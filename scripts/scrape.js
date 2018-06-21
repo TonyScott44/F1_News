@@ -1,17 +1,19 @@
 var request = require("request");
 var cheerio = require("cheerio");
 
-var scrape = function (callback) {
+var scrape = function (cb) {
 
-    request("http://www.skysports.com/f1/news", function(error, response, html) {
-
-        var $ = cheerio.load(html);
+    request("http://www.skysports.com/f1/news", function(error, response, body) {
+        console.log("scrape test 1");
+        var $ = cheerio.load(body);
         var results = [];
 
-        $("a.news-list__headline-link").each(function(i, element) {
+        $(".news-list__headline").each(function(i, element) {
 
-            var title = $(this).text().trim();
-            var sum = $(this).children("news-list__snippet").text().trim();
+            console.log("scrape test 2");
+
+            var title = $(this).children("a").text().trim();
+            var sum = $(this).children("p").text().trim();
 
             if(title && sum) {
                 var titleFormat = title.replace(/(\r\n|\n|\r|\t|\s+)/gm, " ").trim();
@@ -24,7 +26,7 @@ var scrape = function (callback) {
                 results.push(newData);
             }
         });
-        callback(results);
+        cb(results);
     });
 };
 
